@@ -1,7 +1,10 @@
 from pypdf import PdfReader
 import os
 
-def load_documents(folder="data/raw"):
+def load_documents(folder=None):
+    if folder is None:
+        folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "raw")
+
     docs = []
     for filename in os.listdir(folder):
         if filename.endswith(".pdf"):
