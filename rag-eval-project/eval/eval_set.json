@@ -1,0 +1,32 @@
+[
+  {
+    "question": "What is normalization in DBMS?",
+    "expected_source": "dbms_syllabus.pdf",
+    "expected_keywords": ["normalization", "redundancy", "tables"]
+  },
+  {
+    "question": "What are the ACID properties of a transaction?",
+    "expected_source": "dbms_syllabus.pdf",
+    "expected_keywords": ["atomicity", "consistency", "isolation", "durability"]
+  },
+  {
+    "question": "What is the purpose of an index in a database?",
+    "expected_source": "dbms_syllabus.pdf",
+    "expected_keywords": ["index", "retrieval", "speed"]
+  },
+{
+  "question": "What is the difference between a process and a thread?",
+  "expected_source": "os_syllabus.pdf",
+  "expected_keywords": ["process", "thread", "memory"]
+},
+{
+  "question": "What is a binary search tree?",
+  "expected_source": "data_structures_syllabus.pdf",
+  "expected_keywords": ["binary search tree", "left", "right"]
+},
+{
+  "question": "What is the difference between TCP and UDP?",
+  "expected_source": "computer_networks_syllabus.pdf",
+  "expected_keywords": ["tcp", "udp", "connectionless", "reliable"]
+}
+]

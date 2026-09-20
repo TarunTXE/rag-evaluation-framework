@@ -1,0 +1,8 @@
+rag-eval-project/venv/
+rag-eval-project/__pycache__/
+rag-eval-project/**/__pycache__/
+rag-eval-project/*.pyc
+rag-eval-project/chroma_db/
+rag-eval-project/.env
+rag-dashboard/node_modules/
+rag-dashboard/dist/

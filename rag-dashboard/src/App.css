@@ -1,0 +1,172 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0f1117;
+  color: #e4e6eb;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.dashboard {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.dashboard h1 {
+  font-size: 1.9rem;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(90deg, #7c9eff, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  color: #9aa0ac;
+  margin-bottom: 2.5rem;
+  font-size: 0.95rem;
+}
+
+.card {
+  background: #171923;
+  border: 1px solid #262a38;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #cfd3dc;
+}
+
+.query-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.query-row input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  background: #0f1117;
+  border: 1px solid #2c2f3d;
+  border-radius: 8px;
+  color: #e4e6eb;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.query-row input:focus {
+  border-color: #7c9eff;
+}
+
+.query-row button {
+  padding: 0.7rem 1.4rem;
+  background: linear-gradient(90deg, #7c9eff, #a78bfa);
+  border: none;
+  border-radius: 8px;
+  color: #0f1117;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.query-row button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.query-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: #ff6b6b;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.result-box {
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+  background: #0f1117;
+  border: 1px solid #262a38;
+  border-radius: 10px;
+}
+
+.result-box .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7c9eff;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.result-box p {
+  margin: 0 0 1.25rem 0;
+  line-height: 1.6;
+  color: #e4e6eb;
+}
+
+.sources-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sources-list li {
+  padding: 0.7rem 0;
+  border-top: 1px solid #21242f;
+  font-size: 0.88rem;
+  color: #9aa0ac;
+  line-height: 1.5;
+}
+
+.sources-list li strong {
+  color: #cfd3dc;
+  font-style: normal;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th {
+  text-align: left;
+  padding: 0.7rem 0.6rem;
+  color: #7c9eff;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #2c2f3d;
+}
+
+td {
+  padding: 0.7rem 0.6rem;
+  border-bottom: 1px solid #21242f;
+  color: #cfd3dc;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.recall-good {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.recall-warn {
+  color: #fbbf24;
+  font-weight: 600;
+}
