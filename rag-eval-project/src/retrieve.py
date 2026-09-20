@@ -1,7 +1,7 @@
-from embed_store import model, collection
+from embed_store import embed_model, collection, embed_texts
 
 def retrieve(query, k=3):
-    query_embedding = model.encode([query]).tolist()
+    query_embedding = embed_texts([query])
     results = collection.query(
         query_embeddings=query_embedding,
         n_results=k
