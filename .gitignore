@@ -6,3 +6,4 @@ rag-eval-project/chroma_db/
 rag-eval-project/.env
 rag-dashboard/node_modules/
 rag-dashboard/dist/
+node_modules/
