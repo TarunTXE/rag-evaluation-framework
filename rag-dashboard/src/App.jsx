@@ -2,6 +2,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import './App.css'
 
+const API_URL = 'https://rag-eval-api-ids2.onrender.com'
+
 const VARIANT_RESULTS = [
   { name: 'Baseline', chunkSize: 500, k: 3, embedding: 'MiniLM (384d)', recall: 100, faithfulness: 100 },
   { name: 'A — Smaller chunks', chunkSize: 100, k: 3, embedding: 'MiniLM (384d)', recall: 100, faithfulness: 100 },
@@ -16,6 +18,10 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const [file, setFile] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadStatus, setUploadStatus] = useState('')
+
   const handleAsk = async () => {
     if (!question.trim()) return
     setLoading(true)
@@ -23,19 +29,59 @@ function App() {
     setAnswer('')
     setSources([])
     try {
-      const res = await axios.post('https://rag-eval-api-ids2.onrender.com/query', { question })
+      const res = await axios.post(`${API_URL}/query`, { question })
       setAnswer(res.data.answer)
       setSources(res.data.sources)
     } catch (err) {
-      setError('Failed to reach the backend. Is the FastAPI server running?')
+      setError('Failed to reach the backend. Is the API awake? (First request can take 30-50s.)')
     }
     setLoading(false)
+  }
+
+  const handleUpload = async () => {
+    if (!file) return
+    setUploading(true)
+    setUploadStatus('')
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await axios.post(`${API_URL}/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      setUploadStatus(`Added ${res.data.chunks_added} chunks from "${res.data.filename}". You can now ask questions about it.`)
+      setFile(null)
+    } catch (err) {
+      setUploadStatus('Upload failed. Please try again.')
+    }
+    setUploading(false)
   }
 
   return (
     <div className="dashboard">
       <h1>RAG Evaluation Dashboard</h1>
       <p className="subtitle">Syllabus-grounded QA with retrieval configuration benchmarking</p>
+
+      <div className="card">
+        <h2>Upload a PDF</h2>
+        <div className="query-row">
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+          <button onClick={handleUpload} disabled={uploading || !file}>
+            {uploading ? 'Uploading...' : 'Upload'}
+          </button>
+        </div>
+        {uploadStatus && (
+          <p
+            className="error-text"
+            style={{ color: uploadStatus.startsWith('Added') ? '#4ade80' : '#ff6b6b' }}
+          >
+            {uploadStatus}
+          </p>
+        )}
+      </div>
 
       <div className="card">
         <h2>Ask a Question</h2>
