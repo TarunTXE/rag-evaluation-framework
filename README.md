@@ -1,6 +1,6 @@
 # RAG Evaluation Framework
 
-A Retrieval-Augmented Generation (RAG) system for answering questions grounded in course syllabus and question-paper content, paired with an automated evaluation framework that benchmarks retrieval and generation quality across different pipeline configurations.
+A Retrieval-Augmented Generation (RAG) system for answering questions grounded in course syllabus and question-paper content, paired with an automated evaluation framework that benchmarks retrieval and generation quality across different pipeline configurations. Supports uploading your own PDFs to query on the fly.
 
 **Live demo:** https://rag-evaluation-framework.vercel.app
 **Live API:** https://rag-eval-api-ids2.onrender.com/docs
@@ -11,7 +11,9 @@ A Retrieval-Augmented Generation (RAG) system for answering questions grounded i
 
 ## What it does
 
-The system ingests PDF documents (syllabi, question papers), chunks and embeds them, and answers natural-language questions using only the retrieved context — with source attribution shown alongside every answer. Rather than shipping a single, unmeasured RAG pipeline, the project systematically varies key configuration choices (chunk size, retrieval depth, embedding model) and measures the impact of each on:
+The system ingests PDF documents (syllabi, question papers), chunks and embeds them, and answers natural-language questions using only the retrieved context — with source attribution shown alongside every answer. Users can also upload their own PDF directly through the dashboard, which is immediately indexed and made queryable alongside the existing corpus.
+
+Rather than shipping a single, unmeasured RAG pipeline, the project systematically varies key configuration choices (chunk size, retrieval depth, embedding model) and measures the impact of each on:
 
 - **Retrieval Recall@k** — does the system retrieve the correct source document for a given question?
 - **Faithfulness** — does the generated answer actually reflect the retrieved content, rather than hallucinating?
@@ -27,6 +29,12 @@ Switching from a general-purpose embedding model (`all-MiniLM-L6-v2`) to a small
 | B — Larger k | 500 | 5 | MiniLM (384d) | 100% | 100% |
 | C — Weaker embeddings | 500 | 3 | Albert-small (768d) | 83.33% | 100% |
 
+## Features
+
+- **Document QA** — ask natural-language questions, get answers grounded in retrieved source content with citations
+- **PDF upload** — upload any PDF through the dashboard; it's chunked, embedded, and added to the searchable index immediately, no restart needed
+- **Evaluation dashboard** — live comparison table of retrieval/faithfulness scores across pipeline configurations
+
 ## Architecture
 
 ```
@@ -38,12 +46,12 @@ rag-eval-project/          Backend (FastAPI + Python)
 │   ├── retrieve.py         Semantic retrieval
 │   ├── generate.py         LLM answer generation (Groq API), grounded in retrieved context
 │   ├── eval_harness.py     Evaluation: retrieval recall@k, faithfulness scoring
-│   └── api.py               FastAPI endpoint wrapping the pipeline
+│   └── api.py               FastAPI endpoints: /query, /upload
 ├── data/raw/                Source PDF documents
 └── eval/eval_set.json       Hand-written test questions with expected sources/keywords
 
 rag-dashboard/              Frontend (React + Vite)
-└── src/App.jsx              Query interface + variant comparison dashboard
+└── src/App.jsx              Query interface, PDF upload, and variant comparison dashboard
 ```
 
 **Stack:** Python, FastAPI, ChromaDB, fastembed, Groq API (LLM inference), React, Vite, deployed on Render (backend) and Vercel (frontend).
@@ -55,6 +63,15 @@ rag-dashboard/              Frontend (React + Vite)
 3. **Recall@k** checks whether the correct source document appears among the top-k retrieved chunks.
 4. **Faithfulness** checks whether the generated answer contains the expected keywords, as a proxy for groundedness.
 5. Results are compared across variants to identify which configuration choices actually matter.
+
+## How PDF upload works
+
+1. A PDF is sent to the `/upload` endpoint and read directly from memory (no permanent disk storage).
+2. It's split into chunks and embedded using the same pipeline as the main corpus.
+3. The new chunks are added directly to the existing vector index (`collection.add`) rather than triggering a full rebuild.
+4. The uploaded content becomes immediately queryable through the same `/query` endpoint.
+
+**Note on persistence:** Render's free tier uses ephemeral storage — uploaded content is searchable for the lifetime of that backend instance, but is not retained across restarts or redeploys. A production version would persist uploads to durable storage (e.g. S3) instead.
 
 ## Running locally
 
