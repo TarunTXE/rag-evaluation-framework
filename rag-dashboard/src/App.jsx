@@ -23,7 +23,7 @@ function App() {
     setAnswer('')
     setSources([])
     try {
-      const res = await axios.post('http://127.0.0.1:8000/query', { question })
+      const res = await axios.post('https://rag-eval-api-ids2.onrender.com/query', { question })
       setAnswer(res.data.answer)
       setSources(res.data.sources)
     } catch (err) {
