@@ -132,7 +132,7 @@ function App() {
           <tbody>
             {VARIANT_RESULTS.map((v) => (
               <tr key={v.name}>
-                <td>{v.name}</td>
+                <td><span className="chip">{v.name}</span></td>
                 <td>{v.chunkSize}</td>
                 <td>{v.k}</td>
                 <td>{v.embedding}</td>
