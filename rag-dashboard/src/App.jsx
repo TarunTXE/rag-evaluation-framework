@@ -21,6 +21,7 @@ function App() {
   const [file, setFile] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [uploadStatus, setUploadStatus] = useState('')
+  const [uploadOk, setUploadOk] = useState(true)
 
   const handleAsk = async () => {
     if (!question.trim()) return
@@ -33,7 +34,7 @@ function App() {
       setAnswer(res.data.answer)
       setSources(res.data.sources)
     } catch (err) {
-      setError('Failed to reach the backend. Is the API awake? (First request can take 30-50s.)')
+      setError('Could not reach the API. If it has been idle, the first request can take 30–50s to wake it.')
     }
     setLoading(false)
   }
@@ -48,85 +49,84 @@ function App() {
       const res = await axios.post(`${API_URL}/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      setUploadStatus(`Added ${res.data.chunks_added} chunks from "${res.data.filename}". You can now ask questions about it.`)
+      setUploadOk(true)
+      setUploadStatus(`Indexed ${res.data.chunks_added} chunks from ${res.data.filename}. Ready to query.`)
       setFile(null)
     } catch (err) {
+      setUploadOk(false)
       setUploadStatus('Upload failed. Please try again.')
     }
     setUploading(false)
   }
 
   return (
-    <div className="dashboard">
-      <h1>RAG Evaluation Dashboard</h1>
-      <p className="subtitle">Syllabus-grounded QA with retrieval configuration benchmarking</p>
+    <div className="report">
+      <header>
+        <h1>RAG Evaluation Framework</h1>
+        <p className="subtitle">
+          A retrieval-augmented question answering system with an evaluation
+          layer that benchmarks retrieval and generation quality across
+          pipeline configurations.
+        </p>
+      </header>
 
-      <div className="card">
-        <h2>Upload a PDF</h2>
-        <div className="query-row">
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-          <button onClick={handleUpload} disabled={uploading || !file}>
-            {uploading ? 'Uploading...' : 'Upload'}
+      <section>
+        <h2>Upload a document</h2>
+        <div className="field-row">
+          <input type="file" accept="application/pdf" onChange={(e) => setFile(e.target.files[0])} />
+          <button className="btn" onClick={handleUpload} disabled={uploading || !file}>
+            {uploading ? 'Indexing…' : 'Upload'}
           </button>
         </div>
         {uploadStatus && (
-          <p
-            className="error-text"
-            style={{ color: uploadStatus.startsWith('Added') ? '#4ade80' : '#ff6b6b' }}
-          >
-            {uploadStatus}
-          </p>
+          <p className={`status-line ${uploadOk ? 'ok' : 'err'}`}>{uploadStatus}</p>
         )}
-      </div>
+      </section>
 
-      <div className="card">
-        <h2>Ask a Question</h2>
-        <div className="query-row">
+      <section>
+        <h2>Ask a question</h2>
+        <div className="field-row">
           <input
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-            placeholder="e.g. What is normalization in DBMS?"
+            placeholder="What is normalization in DBMS?"
           />
-          <button onClick={handleAsk} disabled={loading}>
-            {loading ? 'Asking...' : 'Ask'}
+          <button className="btn" onClick={handleAsk} disabled={loading}>
+            {loading ? 'Thinking…' : 'Ask'}
           </button>
         </div>
 
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="status-line err">{error}</p>}
 
         {answer && (
-          <div className="result-box">
-            <span className="label">Answer</span>
+          <div className="answer-block">
+            <span className="kicker">Answer</span>
             <p>{answer}</p>
-            <span className="label">Sources</span>
-            <ul className="sources-list">
+            <span className="kicker">Sources</span>
+            <ul className="sources">
               {sources.map((s, i) => (
                 <li key={i}>
-                  <strong>{s.source}</strong> — {s.text}...
+                  <span className="fname">{s.source}</span> — {s.text}…
                 </li>
               ))}
             </ul>
           </div>
         )}
-      </div>
+      </section>
 
-      <div className="card">
-        <h2>Variant Comparison</h2>
+      <section>
+        <h2>Configuration benchmark</h2>
         <table>
           <thead>
             <tr>
               <th>Variant</th>
-              <th>Chunk Size</th>
+              <th>Chunk</th>
               <th>k</th>
-              <th>Embedding Model</th>
+              <th>Embedding</th>
               <th>Recall</th>
-              <th>Faithfulness</th>
+              <th>Faithful.</th>
             </tr>
           </thead>
           <tbody>
@@ -136,13 +136,17 @@ function App() {
                 <td>{v.chunkSize}</td>
                 <td>{v.k}</td>
                 <td>{v.embedding}</td>
-                <td className={v.recall === 100 ? 'recall-good' : 'recall-warn'}>{v.recall}%</td>
-                <td className={v.faithfulness === 100 ? 'recall-good' : 'recall-warn'}>{v.faithfulness}%</td>
+                <td className={v.recall === 100 ? 'good' : 'warn'}>{v.recall}%</td>
+                <td className={v.faithfulness === 100 ? 'good' : 'warn'}>{v.faithfulness}%</td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </section>
+
+      <footer>
+        Built by Tarun Harish E · TarunTXE
+      </footer>
     </div>
   )
 }
